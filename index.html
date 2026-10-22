@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#11161d" />
+  <meta name="description" content="A local-first Wuthering Waves Resonator, build, Echo, and Convene planner." />
+  <title>Tacet Archive — Wuthering Waves Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview" aria-label="Tacet Archive home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>TACET <em>ARCHIVE</em></strong><small>WUTHERING WAVES COMPANION</small></span>
+      </a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-page="overview"><span class="nav-icon">◈</span><span>Overview</span></button>
+        <button class="nav-item" data-page="resonators"><span class="nav-icon">✧</span><span>Resonators</span><span class="nav-count" id="resonatorNavCount">12</span></button>
+        <button class="nav-item" data-page="planner"><span class="nav-icon">⌘</span><span>Build planner</span></button>
+        <button class="nav-item" data-page="echoes"><span class="nav-icon">◉</span><span>Echo vault</span><span class="nav-count" id="echoNavCount">0</span></button>
+        <button class="nav-item" data-page="convene"><span class="nav-icon">✦</span><span>Convene log</span></button>
+        <button class="nav-item" data-page="routine"><span class="nav-icon">✓</span><span>Daily routine</span></button>
+        <button class="nav-item" data-page="inventory"><span class="nav-icon">▦</span><span>Inventory</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip"><div class="tip-orbit">✦</div><strong>Keep your resonance in tune.</strong><p>Your plans stay on this device. Export a backup any time.</p><button id="sidebarBackup" class="text-button">Back up data <span>↗</span></button></div>
+        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙</span><span>Settings & data</span></button>
+        <div class="side-footer"><span class="status-dot"></span> LOCAL SAVE ACTIVE <span class="side-version">v1.0</span></div>
+      </div>
+    </aside>
+
+    <main class="main-shell">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb"><span>FIELD OPERATIONS</span><span class="crumb-slash">/</span><strong id="breadcrumbPage">OVERVIEW</strong></div>
+        <div class="top-actions">
+          <label class="top-search"><span>⌕</span><input type="search" id="globalSearch" placeholder="Search resonators..." aria-label="Search resonators" /><kbd> / </kbd></label>
+          <button class="icon-button" id="exportTop" title="Export backup" aria-label="Export backup">⇩</button>
+          <div class="profile-chip"><div class="profile-avatar">R</div><div><strong id="accountNameTop">Rover</strong><small>Rover profile</small></div><span class="profile-caret">⌄</span></div>
+        </div>
+      </header>
+      <div id="pageContent" class="page-content"></div>
+      <footer class="app-footer"><span>Fan-made companion · Not affiliated with Kuro Games</span><span>YOUR DATA STAYS IN THIS BROWSER <i class="status-dot"></i></span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head"><div><div class="eyebrow" id="modalEyebrow">ARCHIVE ENTRY</div><h2 id="modalTitle">Edit entry</h2></div><button class="icon-button close-modal" id="closeModal" aria-label="Close dialog">×</button></div>
+      <div id="modalBody"></div>
+    </section>
+  </div>
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <input type="file" id="importFile" accept="application/json,.json" hidden />
+  <script src="app.js"></script>
+</body>
+</html>
