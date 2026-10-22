@@ -1,4 +1,4 @@
-/* Static game reference data */
+/* Static game reference data extracted from the supplied planner workbook. */
 window.TACET_GAME_DB = {
     "characters": [{
         "name": "Aalto",
@@ -901,6 +901,120 @@ window.TACET_GAME_DB = {
         "type": "Sword",
         "enemyMats": ["LF Mech Core", "MF Mech Core", "HF Mech Core", "FF Mech Core"],
         "weaponMats": ["Broken Wing Polarizer", "Monowing Polarizer", "Polywing Polarizer", "Layered Wing Polarizer"]
+    }, {
+        "name": "Fusion Accretion",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Comet Flare",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Jinzhou Keeper",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Ocean's Gift",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Call of the Abyss",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Celestial Spiral",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Hollow Mirage",
+        "rarity": 4,
+        "type": "Rectifier",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Relativistic Jet",
+        "rarity": 4,
+        "type": "Pistols",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Novaburst",
+        "rarity": 4,
+        "type": "Pistols",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Undying Flame",
+        "rarity": 4,
+        "type": "Pistols",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Endless Collapse",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Lunar Cutter",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Commando of Conviction",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Sword#18",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Overture",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Somnoire Anchor",
+        "rarity": 4,
+        "type": "Sword",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Waning Redshift",
+        "rarity": 4,
+        "type": "Broadblade",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Helios Cleaver",
+        "rarity": 4,
+        "type": "Broadblade",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
+    }, {
+        "name": "Dauntless Evernight",
+        "rarity": 4,
+        "type": "Broadblade",
+        "enemyMats": ["", "", "", ""],
+        "weaponMats": ["", "", "", ""]
     }],
     "items": [{
         "name": "Elegy Tacet Core",

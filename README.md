@@ -1,44 +1,64 @@
 # Tacet Archive — Wuthering Waves Planner
 
-Tacet Archive is a dark, responsive, local-first Wuthering Waves companion site. It is a static HTML/CSS/JavaScript project that can be hosted directly on GitHub Pages — no build step, backend, sign-in, or API key is needed.
+Tacet Archive is a dark, responsive, local-first Wuthering Waves companion app. It is a static HTML/CSS/JavaScript project that runs on GitHub Pages without a backend, build step, login, or API key.
 
 ## Features
 
-- Dashboard with account overview, Resonator roster, weapon counts, daily checklist, and build queue
-- Resonator roster with current/target levels, Resonance Chains, element, weapon type, role, and calculated materials
-- Weapon tracker with a catalog of weapons, rarity/type, assigned Resonator, current/target level, and calculated materials
-- Collective Build Planner that merges all included Resonator and Weapon requirements by item and shows which builds need each item as icon tiles
-- Material inventory for EXP materials, ascension materials, local specialties, currencies, and weapon upgrade materials; owned quantities are deducted from the Build Planner totals
-- Breakpoint-based requirements for levels 1, 20, 40, 50, 60, 70, 80, and 90
-- Daily and weekly routine tracker with reset controls
-- Optional progress/note queue for Forte or other goals
-- JSON export/import for backup and moving data between browsers
-- Responsive desktop, tablet, and mobile layouts
-- Saves to the current browser's `localStorage`
+- Readable, responsive dashboard and Resonator archive with image slots
+- Weapon tracker with rarity/type, assignment, current and target levels, and image slots
+- **Planner** that combines upgrade requirements across Resonators and Weapons and shows which builds need each item
+- Compact, image-led inventory with owned counts deducted from Planner requirements
+- Inventory groups for **Universal Currency**, **Resonator EXP Material**, **Weapon EXP Material**, **Free Materials**, **Waveplates Materials**, and other material categories
+- Level selectors for `1`, `20`, `20◆`, `40`, `40◆`, `50`, `50◆`, `60`, `60◆`, `70`, `70◆`, `80`, `80◆`, and `90`
+- JSON export/import and automatic saves to this browser's `localStorage`
+- Editable account label and optional goals/notes
 
 ## Publish with GitHub Pages
 
-1. Create a new GitHub repository.
-2. Upload **all four application files** — `index.html`, `styles.css`, `game-data.js`, and `app.js` — plus this `README.md` to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**, then select the default branch and `/(root)`.
-5. Save. GitHub Pages will provide the site URL after deployment completes.
+1. Create a GitHub repository.
+2. Upload all project files and the `assets/` directory to the repository root.
+3. In the repository, open **Settings → Pages**.
+4. Under **Build and deployment**, select **Deploy from a branch**, then choose your main branch and `/(root)`.
+5. Save. GitHub Pages will publish the site URL after deployment finishes.
 
-No `npm install`, bundler, GitHub Actions workflow, or server is needed. Google Fonts are optional; system fonts are used as a fallback.
+There is no package installation or build step. Google Fonts are optional; local fallback fonts are available.
 
-## Data and calculations
+## Image files: where to put them
 
-The bundled Resonator, Weapon, item, EXP, and level cost reference data was extracted from the supplied **Wuthering Waves - Planner.xlsx** workbook. All calculations happen in your browser. The planner calculates level EXP materials, leveling Shell Credits, and level ascension requirements up to each selected target. It does **not** calculate Forte/skill-upgrade material requirements yet, and it does not connect to your game account. The supplied workbook has some weapon catalog rows without ascension-material families; for those entries, the app shows a warning and calculates EXP and Shell Credits only. Custom weapon names that do not match the workbook catalog have the same limitation. Check costs against the current in-game version before farming, especially as patches change game data.
+You can add transparent PNG artwork later. The app will automatically use an image when it finds the matching file; if no file exists, it displays the initials placeholder.
 
-The collective planner sums required quantities across included Resonators and Weapons. Each material tile shows its total requirement, inventory count, remaining amount, and icons for every tracked build that needs the item. You can turn a Resonator or Weapon off for planning from its edit dialog.
+- Resonators: `assets/images/resonators/<slug>.png`
+- Weapons: `assets/images/weapons/<slug>.png`
+- Items/materials: `assets/images/materials/<slug>.png`
 
-## Data and backups
+The filename is the visible in-app name converted to a lowercase slug: remove accents and apostrophes, replace spaces and punctuation with hyphens, and remove hyphens from the beginning/end. Examples:
 
-Data is stored locally in the browser/device being used. Choose **Settings & data → Export JSON** (or the download icon in the header) to back it up, then use **Import JSON** to restore it elsewhere. Data is not synced between devices. The app can migrate the first-version saved roster and discard the now-removed Echo Vault/Convene Log fields when loading or importing an older Tacet Archive backup.
+| Visible name | Image path |
+|---|---|
+| `Jinhsi` | `assets/images/resonators/jinhsi.png` |
+| `The Shorekeeper` | `assets/images/resonators/the-shorekeeper.png` |
+| `Firstlight's Herald` | `assets/images/weapons/firstlights-herald.png` |
+| `Premium Resonance Potion` | `assets/images/materials/premium-resonance-potion.png` |
+| `Shell Credit` | `assets/images/materials/shell-credit.png` |
 
-## Important notes
+Use PNG with transparent backgrounds where possible. Resonator portraits work best around 3:4 or 4:5; weapons and materials work best as square icons. Keep file names exactly as specified, including hyphens. You do not need to edit code when adding images.
 
-- This is a fan-made planner, not an official Wuthering Waves app and not affiliated with Kuro Games.
-- Starter Resonators, weapons, currency counts, and build goals are sample data; edit them to match your account.
-- The material inventory is manual; changing an inventory count updates the Build Planner's remaining quantities.
+## Level and material calculations
+
+The bundled Resonator, Weapon, item, EXP, and level-cost reference data comes from the supplied **Wuthering Waves - Planner.xlsx** workbook. Calculations happen locally in the browser. The app estimates level EXP material and Shell Credit requirements, adds ascension requirements at ascension gates represented in that workbook, and deducts tracked inventory.
+
+The planner uses the workbook's cumulative level EXP and Shell Credit curves, and charges ascension materials at the listed gates (`20◆`, `40◆`, `50◆`, `60◆`, `70◆`, and `80◆`). Please check against your game's current in-game costs if the game is updated.
+
+Some weapon catalog rows in the workbook lack ascension-material mappings. For these, the planner shows a note and calculates EXP and Shell Credits only. Forte/skill-upgrade materials are not currently included in calculated build totals.
+
+The inventory is manual: enter the number you own in each tile. Universal Currency, Resonator EXP Material, and Weapon EXP Material appear first in that order, independent of the category filter. The category filter only changes the materials listed below those three pinned groups.
+
+## Local saves and backups
+
+Data is stored in this browser/device and does not sync to other devices. Use **Settings & data → Export JSON** to make a backup and **Import JSON** to restore it. Keep a backup before clearing browser data. Older archive backups are normalized when imported; data from legacy, unsupported sections is ignored.
+
+## Notes
+
+- Fan-made project; not affiliated with Kuro Games.
+- Starter Resonators, weapons, and goals are samples. Edit or replace them to match your account.
 - Clearing browser storage clears the local archive unless you have a JSON backup.
