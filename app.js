@@ -72,13 +72,14 @@
     for (let i = 1; i < LEVEL_BREAKPOINTS.length; i++) {
       const d = Math.abs(levelNumber(LEVEL_BREAKPOINTS[i]) - levelNumber(text));
       const bd = Math.abs(levelNumber(LEVEL_BREAKPOINTS[best]) - levelNumber(text));
-      if (d < bd || (d === bd && (text.includes('◆') ? (LEVEL_BREAKPOINTS[i].includes('◆') && !LEVEL_BREAKPOINTS[best].includes('◆')) : (!LEVEL_BREAKPOINTS[i].includes('◆') && LEVEL_BREAKPOINTS[best].includes('◆'))))) best = i;
+      if (d < bd || (d === bd && !LEVEL_BREAKPOINTS[i].includes('◆') && LEVEL_BREAKPOINTS[best].includes('◆'))) best = i;
     }
     return best;
   }
   function normalizedBreakpoint(value, fallback='1') {
     if (value == null || value === '') return normalizedBreakpoint(fallback, '1');
     const text = String(value);
+    if (text === '30' || text === '30◆') return '20◆';
     if (LEVEL_BREAKPOINTS.includes(text)) return text;
     const numeric = String(levelNumber(text));
     if (LEVEL_BREAKPOINTS.includes(numeric)) return numeric;
@@ -284,6 +285,7 @@
     document.querySelectorAll('.nav-item[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === page));
     document.getElementById('breadcrumbPage').textContent = titleFor(page);
     document.getElementById('sidebar').classList.remove('mobile-open');
+    const menuButton=document.getElementById('mobileMenu'); if(menuButton) menuButton.setAttribute('aria-label','Open navigation');
     renderPage(); window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function pageHeading(eyebrow, title, desc, actions='') { return `<div class="page-heading"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${desc}</p></div><div class="heading-actions">${actions}</div></div>`; }
@@ -346,7 +348,7 @@
     const materialSection=!materials.length?emptyState('No builds need materials yet','Raise a target level above the current level on a Resonator or Weapon card to populate the collective plan.','Manage Resonators','data-nav="resonators"'):!visibleMaterials.length?emptyState('All tracked materials are covered','Every planned item is fully covered by the inventory counts. Turn on “Show fully stocked items” to review the full requirement list.'): `<div class="material-grid">${visibleMaterials.map(item=>`<article class="material-card"><div class="material-card-top"><div class="material-symbol item-symbol"><span class="item-symbol-placeholder">${esc(initials(item.name))}</span>${assetImage('materials',item.name,'material-portrait')}</div><span class="material-type">${esc(item.type)}</span></div><h3>${esc(item.name)}</h3><div class="material-amounts"><div><small>Total needed</small><strong>${fmt(item.required)}</strong></div><div><small>In inventory</small><strong>${fmt(item.owned)}</strong></div><div class="${item.remaining?'amount-missing':'amount-complete'}"><small>${item.remaining?'Need to farm':'Surplus'}</small><strong>${fmt(item.remaining?item.remaining:Math.max(0,item.owned-item.required))}</strong></div></div><div class="material-progress"><span style="width:${Math.min(100,item.required?item.owned/item.required*100:100)}%"></span></div><div class="needed-by-label">Used by ${item.sources.length} build${item.sources.length===1?'':'s'}</div><div class="needed-by-icons">${item.sources.map(materialUnitIcon).join('')}</div><div class="material-card-foot"><span>${esc(item.type)}</span><button class="link-button" data-nav="inventory">Inventory ↗</button></div></article>`).join('')}</div>`;
     return `${pageHeading('PROGRESSION WORKBENCH','Planner','Select target levels on Resonator and Weapon cards. Requirements are combined across every included build, with owned inventory deducted.',`${button('＋ Add Resonator','data-action="add-resonator"')}${button('＋ Add weapon','data-action="add-weapon"','primary')}`)}
       <section class="planner-summary"><div><span class="eyebrow">COLLECTIVE REQUIREMENTS</span><h2>Materials for your next upgrades</h2><p>Icons under each item show which Resonators and Weapons need it. Adjust inventory counts to update what remains to farm.</p></div><div class="planner-summary-stats"><div><small>Builds included</small><strong>${units.length}</strong></div><div><small>Item types</small><strong>${materials.length}</strong></div><div><small>With shortages</small><strong>${missingTypes}</strong></div></div></section>
-      <div class="planner-controls"><span class="form-hint">Calculations cover level EXP, leveling Shell Credits, and ascension materials through the selected target. Ascension materials are charged at the workbook’s listed ascension gates.</span><label class="checkbox-row"><input type="checkbox" id="showCompleteMaterials" ${plannerShowComplete?'checked':''}> Show fully stocked items</label></div>
+      <div class="planner-controls"><span class="form-hint">Calculations cover level EXP, leveling Shell Credits, and ascension materials through the selected target. Ascension materials are charged at the relevant ascension gates.</span><label class="checkbox-row"><input type="checkbox" id="showCompleteMaterials" ${plannerShowComplete?'checked':''}> Show fully stocked items</label></div>
       ${materialSection}
       <div class="grid columns-2 planner-lower"><section class="section-card"><div class="section-head"><div><h2>Build progress</h2><p>Optional notes and progress alongside the calculated material list.</p></div><span class="pill mint">${state.goals.length} goals</span></div><div class="section-body"><div class="detail-grid"><div class="detail-stat"><span>Active goals</span><strong>${activeGoals.length}</strong></div><div class="detail-stat"><span>Completed goals</span><strong>${completeGoals.length}</strong></div><div class="detail-stat"><span>Average active progress</span><strong>${activeGoals.length?Math.round(activeGoals.reduce((s,g)=>s+(Number(g.progress)||0),0)/activeGoals.length):100}%</strong></div><div class="detail-stat"><span>Builds included</span><strong>${units.length}</strong></div></div></div></section>
       <section class="section-card"><div class="section-head"><div><h2>Goal queue</h2><p>Add optional notes or Forte priorities.</p></div><button class="btn small" data-action="add-goal">＋ New goal</button></div><div class="section-body"><div class="quick-goals">${state.goals.length?state.goals.map(g=>`<div class="goal-line"><div class="goal-icon">${g.category==='Skills'?'✧':g.category==='Weapon'?'▱':'⌁'}</div><div class="goal-main"><strong>${esc(g.name)} · ${esc(g.objective)}</strong><small>${esc(g.note||g.category)}</small><div class="progress-track" style="margin-top:8px"><div class="progress-fill" style="width:${Math.max(0,Math.min(100,Number(g.progress)||0))}%"></div></div><div class="progress-row"><span>${Number(g.progress)||0}% complete</span><span>${esc(g.category)}</span></div></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0">${statusPill(g.status)}<button class="icon-text-button" data-edit-goal="${esc(g.id)}" aria-label="Edit goal">✎</button></div></div>`).join(''):emptyState('Your queue is clear','Add a goal to start planning your next build.','＋ New goal','data-action="add-goal"')}</div></div></section></div>`;
@@ -356,7 +358,7 @@
     const search=inventorySearch.trim().toLowerCase();
     const searchMatch=item=>!search || item.name.toLowerCase().includes(search) || String(item.sources||'').toLowerCase().includes(search) || itemGroup(item).toLowerCase().includes(search);
     const pinnedTypes=['Universal Currency','Resonator EXP Material','Weapon EXP Material'];
-    const pinned=pinnedTypes.map(type=>({type,items:allItems.filter(x=>x.type===type && searchMatch(x))}));
+    const pinned=pinnedTypes.map(type=>({type,items:allItems.filter(x=>x.type===type)}));
     const otherItems=allItems.filter(x=>!pinnedTypes.includes(x.type) && searchMatch(x) && (inventoryType==='All material groups'||itemGroup(x)===inventoryType));
     const groupOrder=['Free Materials','Waveplates Materials','Development Material','Resource','Skill Upgrade Material','Other Materials'];
     const groups=inventoryGroupItems(otherItems);
@@ -383,6 +385,11 @@
   }
   function renderPage() {
     const root = document.getElementById('pageContent');
+    const resSearchBox=document.getElementById('resonatorSearchBox'); const weaponSearchBox=document.getElementById('weaponSearchBox');
+    resSearchBox.hidden=activePage!=='resonators'; weaponSearchBox.hidden=activePage!=='weapons';
+    const resInput=document.getElementById('resonatorSearchInput'); const weaponInput=document.getElementById('weaponSearchInput');
+    if(resInput && resInput.value!==resonatorSearch) resInput.value=resonatorSearch;
+    if(weaponInput && weaponInput.value!==weaponSearch) weaponInput.value=weaponSearch;
     const views = { overview:renderOverview, resonators:renderResonators, weapons:renderWeapons, planner:renderPlanner, inventory:renderInventory, settings:renderSettings };
     root.innerHTML = (views[activePage] || renderOverview)();
     updateSidebarCounts();
@@ -394,8 +401,8 @@
       const isEdit=Boolean(data.name); const r=data.name?resByName(data.name):null; title.textContent=isEdit?`Edit ${r?.name||data.name}`:'Add Resonator'; eyebrow.textContent='RESONATOR LEVEL TARGET';
       const base=r||{name:'',level:'1',goalLevel:'90',chain:0,element:'Spectro',weapon:'Sword',rarity:5,status:'Planned',role:'Main DPS',notes:'',forte:1,includeInPlanner:true};
       const targetLevels=LEVEL_BREAKPOINTS.filter(l=>levelIndex(l)>=levelIndex(base.level||'1'));
-      html=`<form id="modalForm" class="modal-form"><input type="hidden" name="originalName" value="${esc(r?.name||'')}"><div class="form-grid">
-        <div class="form-field span-2"><label for="resName">Resonator name</label><input class="input-control" id="resName" name="name" maxlength="60" value="${esc(base.name)}" required ${isEdit?'readonly':''}></div>
+      html=`<form id="modalForm" class="modal-form"><input type="hidden" name="originalName" value="${esc(r?.name||'')}"><div class="form-grid unit-modal-grid">
+        <div class="form-field span-3"><label for="resName">Resonator name</label><input class="input-control" id="resName" name="name" maxlength="60" value="${esc(base.name)}" required ${isEdit?'readonly':''}></div>
         <div class="form-field"><label for="resElement">Element</label><select class="select-control" id="resElement" name="element">${[...ELEMENTS,'Unknown'].map(x=>`<option value="${x}" ${base.element===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="resWeapon">Weapon type</label><select class="select-control" id="resWeapon" name="weapon">${['Sword','Broadblade','Pistols','Gauntlets','Rectifier','Unknown'].map(x=>`<option value="${x}" ${base.weapon===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="resLevel">Current level</label><select class="select-control" id="resLevel" name="level">${LEVEL_BREAKPOINTS.map(l=>`<option value="${l}" ${normalizedBreakpoint(base.level,'1')===l?'selected':''}>Lv. ${l}</option>`).join('')}</select></div>
@@ -405,33 +412,36 @@
         <div class="form-field"><label for="resStatus">Build status</label><select class="select-control" id="resStatus" name="status">${['Built','Building','Planned','Unbuilt'].map(x=>`<option ${base.status===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="resRole">Role / priority</label><select class="select-control" name="role" id="resRole">${['Main DPS','Sub DPS','Support','Healer','Hybrid','Unassigned'].map(x=>`<option ${base.role===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="resForte">Key Forte level (reference)</label><input class="input-control" type="number" name="forte" id="resForte" min="1" max="10" value="${Number(base.forte)||1}"></div>
-        <div class="form-field span-2"><label for="resNotes">Notes</label><textarea class="textarea-control" rows="2" id="resNotes" name="notes" maxlength="500" placeholder="Build notes or priority skills…">${esc(base.notes||'')}</textarea></div>
-        <div class="form-field span-2"><label class="checkbox-row"><input type="checkbox" name="includeInPlanner" ${base.includeInPlanner!==false?'checked':''}> Include this level target in Planner</label></div>
-        </div><div class="form-hint" style="margin-top:10px">Level requirements include EXP, Shell Credits, and ascension materials at the documented ascension gates.</div><div class="form-actions">${isEdit?`<button class="btn danger" type="button" data-delete-res="${esc(r.name)}">Remove</button>`:''}<button class="btn" type="button" data-close-modal>Cancel</button><button class="btn primary" type="submit">Save Resonator</button></div></form>`;
+        <div class="form-field span-3"><label for="resNotes">Notes</label><textarea class="textarea-control" rows="2" id="resNotes" name="notes" maxlength="500" placeholder="Build notes or priority skills…">${esc(base.notes||'')}</textarea></div>
+        <div class="form-field span-3"><label class="checkbox-row"><input type="checkbox" name="includeInPlanner" ${base.includeInPlanner!==false?'checked':''}> Include this level target in Planner</label></div>
+        </div><div class="form-hint" style="margin-top:10px">Level requirements include EXP, Shell Credits, and ascension materials at the relevant ascension gates.</div><div class="form-actions">${isEdit?`<button class="btn danger" type="button" data-delete-res="${esc(r.name)}">Remove</button>`:''}<button class="btn" type="button" data-close-modal>Cancel</button><button class="btn primary" type="submit">Save Resonator</button></div></form>`;
     } else if(kind==='catalog') {
-      title.textContent='Add from catalog'; eyebrow.textContent='RESONATOR CATALOG'; const available=CATALOG.filter(c=>!state.resonators.some(r=>r.name===c.name));
+      title.textContent='Add from catalog'; eyebrow.textContent='RESONATOR CATALOG'; const available=CATALOG.filter(c=>!state.resonators.some(r=>r.name===c.name)).sort((a,b)=>a.name.localeCompare(b.name));
       html=`<form id="modalForm" class="modal-form"><div class="form-field"><label for="catalogName">Select a Resonator</label><select class="select-control" name="catalogName" id="catalogName" required>${available.map(c=>`<option value="${esc(c.name)}">${esc(c.name)} · ${esc(c.element)} · ${c.rarity}★</option>`).join('')}</select>${available.length?'':'<span class="form-hint">All catalog entries are already in your roster. Add a custom entry instead.</span>'}</div><div class="form-hint" style="margin-top:12px">New entries default to Lv. 1 → 90. Edit the card to set the target breakpoint.</div><div class="form-actions"><button class="btn" type="button" data-close-modal>Cancel</button><button class="btn primary" type="submit" ${available.length?'':'disabled'}>Add to roster</button></div></form>`;
     } else if(kind==='weapon') {
       const w=data.weaponId?state.weapons.find(x=>x.id===data.weaponId):null; title.textContent=w?`Edit ${w.name}`:'Add weapon'; eyebrow.textContent='WEAPON LEVEL TARGET';
       const base=w||{id:'',name:'',level:'1',goalLevel:'90',rarity:5,type:'Sword',status:'Planned',assigned:'Unassigned',includeInPlanner:true,notes:''}; const targetLevels=LEVEL_BREAKPOINTS.filter(l=>levelIndex(l)>=levelIndex(base.level||'1'));
-      html=`<form id="modalForm" class="modal-form"><input type="hidden" name="weaponId" value="${esc(w?.id||'')}"><div class="form-grid">
-        <div class="form-field span-2"><label for="weaponName">Weapon name</label><input class="input-control" id="weaponName" name="name" list="weaponNames" maxlength="80" value="${esc(base.name)}" placeholder="Choose or enter a weapon name" required><datalist id="weaponNames">${WEAPON_CATALOG.map(x=>`<option value="${esc(x.name)}"></option>`).join('')}</datalist><span class="form-hint">Catalog names auto-fill rarity, type, and material families.</span></div>
+      const sortedWeaponCatalog=[...WEAPON_CATALOG].sort((a,b)=>a.name.localeCompare(b.name));
+      const matchedWeapon=weaponByName(base.name); const customWeapon=!matchedWeapon && Boolean(base.name);
+      const selectedWeapon=matchedWeapon?.name || (customWeapon?'__custom__':'');
+      html=`<form id="modalForm" class="modal-form"><input type="hidden" name="weaponId" value="${esc(w?.id||'')}"><div class="form-grid unit-modal-grid">
+        <div class="form-field span-3"><label for="weaponName">Weapon name</label><select class="select-control" id="weaponName" name="weaponCatalogName" required><option value="" ${selectedWeapon===''?'selected':''} disabled>Select a weapon</option>${sortedWeaponCatalog.map(x=>`<option value="${esc(x.name)}" ${selectedWeapon===x.name?'selected':''}>${esc(x.name)}</option>`).join('')}<option value="__custom__" ${selectedWeapon==='__custom__'?'selected':''}>Custom weapon…</option></select><span class="form-hint">Catalog options are sorted alphabetically and fill in weapon type and rarity.</span></div>
+        <div class="form-field span-3" id="weaponCustomNameField" ${customWeapon?'':'hidden'}><label for="weaponCustomName">Custom weapon name</label><input class="input-control" id="weaponCustomName" name="weaponCustomName" maxlength="80" value="${esc(customWeapon?base.name:'')}" placeholder="Enter a custom weapon name" ${customWeapon?'required':''}></div>
         <div class="form-field"><label for="weaponType">Weapon type</label><select class="select-control" id="weaponType" name="type">${['Sword','Broadblade','Pistols','Gauntlets','Rectifier','Unknown'].map(x=>`<option value="${x}" ${(weaponData(base)?.type||base.type)===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="weaponRarity">Rarity</label><select class="select-control" id="weaponRarity" name="rarity"><option value="5" ${Number(weaponData(base)?.rarity||base.rarity)===5?'selected':''}>5-star</option><option value="4" ${Number(weaponData(base)?.rarity||base.rarity)===4?'selected':''}>4-star</option></select></div>
         <div class="form-field"><label for="weaponLevel">Current level</label><select class="select-control" id="weaponLevel" name="level">${LEVEL_BREAKPOINTS.map(l=>`<option value="${l}" ${normalizedBreakpoint(base.level,'1')===l?'selected':''}>Lv. ${l}</option>`).join('')}</select></div>
         <div class="form-field"><label for="weaponGoalLevel">Target level</label><select class="select-control" id="weaponGoalLevel" name="goalLevel">${targetLevels.map(l=>`<option value="${l}" ${normalizedBreakpoint(base.goalLevel||base.level,base.level)===l?'selected':''}>Lv. ${l}</option>`).join('')}</select></div>
         <div class="form-field"><label for="weaponStatus">Build status</label><select class="select-control" name="status" id="weaponStatus">${['Built','Building','Planned','Unbuilt'].map(x=>`<option ${base.status===x?'selected':''}>${x}</option>`).join('')}</select></div>
         <div class="form-field"><label for="weaponAssigned">Assigned Resonator</label><select class="select-control" name="assigned" id="weaponAssigned">${['Unassigned',...state.resonators.map(r=>r.name)].filter((x,i,a)=>a.indexOf(x)===i).map(x=>`<option ${base.assigned===x?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
-        <div class="form-field span-2"><label for="weaponNotes">Notes</label><textarea class="textarea-control" rows="2" id="weaponNotes" name="notes" maxlength="400">${esc(base.notes||'')}</textarea></div>
-        <div class="form-field span-2"><label class="checkbox-row"><input type="checkbox" name="includeInPlanner" ${base.includeInPlanner!==false?'checked':''}> Include this level target in Planner</label></div>
-        <div class="form-hint span-2" style="margin-top:0">Level EXP and Shell Credit requirements use the supplied workbook's cumulative totals; ascension materials are added at the listed ascension gates.</div>
+        <div class="form-field span-3"><label for="weaponNotes">Notes</label><textarea class="textarea-control" rows="2" id="weaponNotes" name="notes" maxlength="400">${esc(base.notes||'')}</textarea></div>
+        <div class="form-field span-3"><label class="checkbox-row"><input type="checkbox" name="includeInPlanner" ${base.includeInPlanner!==false?'checked':''}> Include this level target in Planner</label></div>
         </div><div class="form-actions">${w?`<button class="btn danger" type="button" data-delete-weapon="${esc(w.id)}">Remove</button>`:''}<button class="btn" type="button" data-close-modal>Cancel</button><button class="btn primary" type="submit">Save weapon</button></div></form>`;
     } else if(kind==='goal') {
       const g=data.goalId?state.goals.find(x=>x.id===data.goalId):null; title.textContent=g?'Edit build goal':'Create build goal'; eyebrow.textContent='PROGRESSION PLAN'; const b=g||{name:state.resonators[0]?.name||'',objective:data.category==='Weapon'?'Raise Weapon to Lv. 90':'Raise Resonator to Lv. 90',category:data.category||'Resonator',status:'Planned',progress:0,note:''};
       const names=[...state.resonators.map(r=>r.name),...(state.weapons||[]).map(w=>w.name),...CATALOG.map(r=>r.name),...WEAPON_CATALOG.map(w=>w.name)].filter((x,i,a)=>a.indexOf(x)===i);
       html=`<form id="modalForm" class="modal-form"><input type="hidden" name="goalId" value="${esc(g?.id||'')}"><div class="form-grid"><div class="form-field"><label for="goalName">Resonator / Weapon / target name</label><input class="input-control" name="name" id="goalName" list="goalNames" value="${esc(b.name)}" maxlength="80" required><datalist id="goalNames">${names.map(n=>`<option value="${esc(n)}"></option>`).join('')}</datalist></div><div class="form-field"><label for="goalCategory">Goal category</label><select class="select-control" name="category" id="goalCategory">${['Resonator','Skills','Weapon','Other'].map(x=>`<option ${b.category===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="form-field span-2"><label for="goalObjective">Goal</label><input class="input-control" name="objective" id="goalObjective" maxlength="100" value="${esc(b.objective)}" required></div><div class="form-field"><label for="goalStatus">Status</label><select class="select-control" name="status" id="goalStatus">${['Planned','In progress','Complete','On hold'].map(x=>`<option ${b.status===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="form-field"><label for="goalProgress">Progress (%)</label><input class="input-control" type="number" name="progress" id="goalProgress" min="0" max="100" value="${Number(b.progress)||0}"></div><div class="form-field span-2"><label for="goalNote">Notes</label><textarea class="textarea-control" name="note" id="goalNote" rows="3" maxlength="500" placeholder="Priority, missing items, reminders…">${esc(b.note||'')}</textarea></div></div><div class="form-actions">${g?`<button class="btn danger" type="button" data-delete-goal="${esc(g.id)}">Delete</button>`:''}<button class="btn" type="button" data-close-modal>Cancel</button><button class="btn primary" type="submit">Save goal</button></div></form>`;
     }
-    body.innerHTML=html; const backdrop=document.getElementById('modalBackdrop'); backdrop.hidden=false;
+    body.innerHTML=html; const modal=document.querySelector('.modal'); modal.classList.toggle('modal-wide',kind==='resonator'||kind==='weapon'); const backdrop=document.getElementById('modalBackdrop'); backdrop.hidden=false;
     const firstInput=body.querySelector('input:not([type=hidden]), select, textarea'); if(firstInput)setTimeout(()=>firstInput.focus(),10);
   }
   function closeModal() { document.getElementById('modalBackdrop').hidden = true; modalKind = null; }
@@ -447,7 +457,7 @@
       const c=catalogByName(String(val('catalogName'))); if(!c)return; if(resByName(c.name)){toast('Already in roster.',true);return;}
       state.resonators.push({...c,level:'1',goalLevel:'90',includeInPlanner:true,chain:0,status:'Planned',role:'Unassigned',notes:'',forte:1});saveState();closeModal();renderPage();toast(`${c.name} added to roster.`);
     } else if(modalKind==='weapon') {
-      const name=String(val('name')||'').trim(); if(!name)return; const wId=String(val('weaponId')||'')||id('w'); const existing=state.weapons.find(x=>x.id===wId); const db=weaponByName(name);
+      const selected=String(val('weaponCatalogName')||''); const name=(selected==='__custom__'?String(val('weaponCustomName')||''):selected).trim(); if(!name)return; const wId=String(val('weaponId')||'')||id('w'); const existing=state.weapons.find(x=>x.id===wId); const db=weaponByName(name);
       if(state.weapons.some(x=>x.name.toLowerCase()===name.toLowerCase()&&x.id!==wId)){toast('That weapon is already tracked.',true);return;}
       const level=normalizedBreakpoint(val('level'),1); const weapon={id:wId,name,level,goalLevel:maxLevelStep(level,normalizedBreakpoint(val('goalLevel'),level)),rarity:Number(db?.rarity||val('rarity'))===4?4:5,type:db?.type||String(val('type')||'Unknown'),status:String(val('status')||'Planned'),assigned:String(val('assigned')||'Unassigned'),includeInPlanner:checked('includeInPlanner'),notes:String(val('notes')||'').trim()};
       if(existing){const idx=state.weapons.findIndex(x=>x.id===wId);state.weapons[idx]=weapon;}else state.weapons.push(weapon);
@@ -508,7 +518,10 @@
     if(e.target.id==='inventoryType'){inventoryType=e.target.value;renderPage();return;}
     if(e.target.id==='showCompleteMaterials'){plannerShowComplete=e.target.checked;renderPage();return;}
     if(e.target.id==='weaponName'){
+      const isCustom=e.target.value==='__custom__';const customField=document.getElementById('weaponCustomNameField');const customInput=document.getElementById('weaponCustomName');
+      if(customField)customField.hidden=!isCustom;if(customInput)customInput.required=isCustom;
       const db=weaponByName(e.target.value);if(db){const type=document.getElementById('weaponType');const rarity=document.getElementById('weaponRarity');if(type)type.value=db.type;if(rarity)rarity.value=String(db.rarity);}
+      if(isCustom && customInput && !customInput.value) customInput.focus();
       return;
     }
     if(e.target.id==='resLevel'){
@@ -519,21 +532,36 @@
     }
   });
   document.addEventListener('input', e => {
-    if(e.target.id==='globalSearch'){
-      const value=e.target.value; const targetPage=activePage==='weapons'?'weapons':'resonators';
-      if(targetPage==='weapons')weaponSearch=value;else resonatorSearch=value;
-      if(activePage!==targetPage){setPage(targetPage);}else renderPage();
-      const input=document.getElementById('globalSearch');if(input){input.value=value;input.focus();input.setSelectionRange(value.length,value.length);}return;
+    if(e.target.id==='resonatorSearchInput'){
+      const value=e.target.value; const pos=value.length; resonatorSearch=value; renderPage();
+      const input=document.getElementById('resonatorSearchInput');if(input){input.focus();input.setSelectionRange(pos,pos);}return;
+    }
+    if(e.target.id==='weaponSearchInput'){
+      const value=e.target.value; const pos=value.length; weaponSearch=value; renderPage();
+      const input=document.getElementById('weaponSearchInput');if(input){input.focus();input.setSelectionRange(pos,pos);}return;
     }
     if(e.target.id==='inventorySearch'){
       const value=e.target.value;const pos=value.length;inventorySearch=value;renderPage();const input=document.getElementById('inventorySearch');if(input){input.focus();input.setSelectionRange(pos,pos);}
     }
   });
-  document.getElementById('mobileMenu').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('mobile-open'));
+  const sidebar=document.getElementById('sidebar');
+  const closeMobileSidebar=()=>sidebar.classList.remove('mobile-open');
+  const mobileMenu=document.getElementById('mobileMenu');
+  function syncSidebarToggle(){const opened=sidebar.classList.contains('mobile-open');mobileMenu.setAttribute('aria-label',opened?'Close navigation':'Open navigation');mobileMenu.setAttribute('aria-expanded',String(opened));}
+  mobileMenu.addEventListener('click',()=>{sidebar.classList.toggle('mobile-open');syncSidebarToggle();});
+  document.getElementById('sidebarClose').addEventListener('click',()=>{closeMobileSidebar();syncSidebarToggle();});
+  document.getElementById('sidebarScrim').addEventListener('click',()=>{closeMobileSidebar();syncSidebarToggle();});
   document.getElementById('exportTop').addEventListener('click',exportData);
   document.getElementById('sidebarBackup').addEventListener('click',exportData);
   document.getElementById('importFile').addEventListener('change',e=>{importData(e.target.files?.[0]);e.target.value='';});
   document.getElementById('closeModal').addEventListener('click',closeModal);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.getElementById('globalSearch').focus();}});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){closeModal();closeMobileSidebar();syncSidebarToggle();}
+    if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+      e.preventDefault();
+      if(activePage==='weapons') document.getElementById('weaponSearchInput').focus();
+      else { if(activePage!=='resonators') setPage('resonators'); document.getElementById('resonatorSearchInput').focus(); }
+    }
+  });
   updateSidebarCounts();renderPage();
 })();

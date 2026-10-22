@@ -14,11 +14,11 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
       <a class="brand" href="#overview" aria-label="Tacet Archive home">
         <span class="brand-mark"><span></span><span></span><span></span></span>
-        <span class="brand-copy"><strong>TACET <em>ARCHIVE</em></strong><small>WUTHERING WAVES COMPANION</small></span>
+        <span class="brand-copy"><strong>TACET <em>ARCHIVE</em></strong></span>
       </a>
-      <div class="sidebar-label">WORKSPACE</div>
       <nav class="side-nav" aria-label="Main navigation">
         <button class="nav-item active" data-page="overview"><span class="nav-icon">◈</span><span>Overview</span></button>
         <button class="nav-item" data-page="resonators"><span class="nav-icon">✧</span><span>Resonators</span><span class="nav-count" id="resonatorNavCount">12</span></button>
@@ -29,16 +29,18 @@
       <div class="sidebar-bottom">
         <div class="sidebar-tip"><div class="tip-orbit">✦</div><strong>Keep your resonance in tune.</strong><p>Your plans stay on this device. Export a backup any time.</p><button id="sidebarBackup" class="text-button">Back up data <span>↗</span></button></div>
         <button class="nav-item" data-page="settings"><span class="nav-icon">⚙</span><span>Settings & data</span></button>
-        <div class="side-footer"><span class="status-dot"></span> LOCAL SAVE ACTIVE <span class="side-version">v2.1</span></div>
+        <div class="side-footer"><span class="status-dot"></span> LOCAL SAVE ACTIVE <span class="side-version">v2.2</span></div>
       </div>
     </aside>
+    <button class="sidebar-scrim" id="sidebarScrim" type="button" aria-label="Close navigation" tabindex="-1"></button>
 
     <main class="main-shell">
       <header class="topbar">
         <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
         <div class="breadcrumb"><span>FIELD OPERATIONS</span><span class="crumb-slash">/</span><strong id="breadcrumbPage">OVERVIEW</strong></div>
         <div class="top-actions">
-          <label class="top-search"><span>⌕</span><input type="search" id="globalSearch" placeholder="Search resonators or weapons…" aria-label="Search resonators or weapons" /><kbd> / </kbd></label>
+          <label class="top-search" id="resonatorSearchBox" hidden><span>⌕</span><input type="search" id="resonatorSearchInput" placeholder="Search Resonators…" aria-label="Search Resonators" /><kbd> / </kbd></label>
+          <label class="top-search" id="weaponSearchBox" hidden><span>⌕</span><input type="search" id="weaponSearchInput" placeholder="Search Weapons…" aria-label="Search Weapons" /><kbd> / </kbd></label>
           <button class="icon-button" id="exportTop" title="Export backup" aria-label="Export backup">⇩</button>
           <div class="profile-chip"><div class="profile-avatar">R</div><div><strong id="accountNameTop">Rover</strong><small>Rover profile</small></div><span class="profile-caret">⌄</span></div>
         </div>

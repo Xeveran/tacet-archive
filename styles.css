@@ -375,3 +375,85 @@ body { font-size: 17px; line-height: 1.55; }
   .inventory-pinned-groups { grid-template-columns: 1fr; }
   .inventory-group-pinned .inventory-material-grid.pinned-item-grid { grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); }
 }
+
+/* Navigation refinements */
+.sidebar { position: fixed; }
+.sidebar-close { display: none; }
+.sidebar-scrim { display: none; }
+.brand-copy small { display: none; }
+
+/* Full-width searchable page-specific selectors and better-spaced native chevrons. */
+.top-search[hidden], #weaponCustomNameField[hidden] { display: none !important; }
+.select-control {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2393a4b4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  background-size: 13px 13px;
+}
+
+/* Three-column Resonator and Weapon forms on desktop. */
+.modal.modal-wide { width: min(900px,100%); }
+.unit-modal-grid { grid-template-columns: repeat(3,minmax(0,1fr)); column-gap: 15px; row-gap: 12px; }
+.unit-modal-grid .span-3 { grid-column: 1 / -1; }
+
+/* Keep the Planner's unit icons visually separate from the card divider. */
+.needed-by-icons { margin-bottom: 13px; padding-bottom: 2px; }
+
+/* Separate inventory material groups clearly. */
+.inventory-material-section .inventory-group { margin-top: 16px; }
+.inventory-material-section .inventory-group + .inventory-group { margin-top: 20px; }
+.inventory-pinned-groups { gap: 17px; margin-bottom: 20px; }
+
+@media (max-width: 900px) {
+  .modal.modal-wide { width: min(760px,100%); }
+  .unit-modal-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .unit-modal-grid .span-3 { grid-column: 1 / -1; }
+}
+
+@media (max-width: 680px) {
+  .sidebar { z-index: 60; }
+  .sidebar.mobile-open + .sidebar-scrim {
+    display: block;
+    position: fixed;
+    z-index: 55;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: rgba(3,7,12,.62);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+  }
+  .sidebar-close {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #354250;
+    border-radius: 8px;
+    background: #1b242e;
+    color: #d8e2eb;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .brand { padding-right: 43px; }
+  .unit-modal-grid { grid-template-columns: minmax(0,1fr); }
+  .unit-modal-grid .span-3 { grid-column: auto; }
+  .modal.modal-wide { width: 100%; }
+  .top-search { width: min(34vw,190px); min-width: 106px; height: 34px; padding: 0 7px; gap: 5px; }
+  .top-search input { display: block; font-size: 12px; }
+  .top-search kbd { display: none; }
+  .top-search > span { font-size: 17px; }
+  .top-actions { gap: 5px; }
+}

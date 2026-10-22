@@ -2,6 +2,8 @@
 
 Tacet Archive is a dark, responsive, local-first Wuthering Waves companion app. It is a static HTML/CSS/JavaScript project that runs on GitHub Pages without a backend, build step, login, or API key.
 
+The current interface includes page-specific Resonator/Weapon search, an overlay-dismissible mobile sidebar, wider three-column desktop edit forms, and an alphabetized Weapon catalog selector. Inventory search applies only to the upgrade-material groups, leaving the three pinned material groups visible.
+
 ## Features
 
 - Readable, responsive dashboard and Resonator archive with image slots
